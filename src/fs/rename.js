@@ -1,28 +1,22 @@
+import { ERRORMESSAGE, FOLDER, ERRORNOENTRY } from "./const.js";
 import path from "path";
-import { fileURLToPath } from "url";
 import { access, rename as renameFile } from "fs/promises";
 
 const rename = async () => {
-  const folder = path.join(
-    path.dirname(fileURLToPath(import.meta.url)),
-    "files",
-  );
-  const fileSource = path.join(folder, "wrongFilename.txt");
-  const fileTarget = path.join(folder, "properFilename.md");
-  const errorMessage = "FS operation failed";
-  const errorNoEntry = "ENOENT";
+  const fileSource = path.join(FOLDER, "wrongFilename.txt");
+  const fileTarget = path.join(FOLDER, "properFilename.md");
 
   try {
     await access(fileSource).catch(() => {
-      throw new Error(errorMessage);
+      throw new Error(ERRORMESSAGE);
     });
 
     await access(fileTarget)
       .then(async () => {
-        throw new Error(errorMessage);
+        throw new Error(ERRORMESSAGE);
       })
       .catch(async (error) => {
-        if (error.code === errorNoEntry) {
+        if (error.code === ERRORNOENTRY) {
           await renameFile(fileSource, fileTarget);
         } else {
           throw error;

@@ -1,26 +1,20 @@
+import { ERRORMESSAGE, FOLDER, ERRORNOENTRY } from "./const.js";
 import { access, writeFile, mkdir } from "fs/promises";
 import path from "path";
-import { fileURLToPath } from "url";
 
 const create = async () => {
   const content = "I am fresh and young";
-  const folder = path.join(
-    path.dirname(fileURLToPath(import.meta.url)),
-    "files",
-  );
   const file = "fresh.txt";
-  const filePath = path.join(folder, file);
-  const errorMessage = "FS operation failed";
-  const errorNoEntry = "ENOENT";
+  const filePath = path.join(FOLDER, file);
 
   try {
-    await access(folder).catch(async () => await mkdir(folder));
+    await access(FOLDER).catch(async () => await mkdir(FOLDER));
     await access(filePath)
       .then(() => {
-        throw new Error(errorMessage);
+        throw new Error(ERRORMESSAGE);
       })
       .catch(async (error) => {
-        if (error.code === errorNoEntry) {
+        if (error.code === ERRORNOENTRY) {
           await writeFile(filePath, content);
         } else {
           throw error;
