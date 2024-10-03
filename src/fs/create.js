@@ -10,14 +10,24 @@ const create = async () => {
   );
   const file = "fresh.txt";
   const filePath = path.join(folder, file);
+  const errorMessage = "FS operation failed";
+  const errorNoEntry = "ENOENT";
 
   try {
     await access(folder).catch(async () => await mkdir(folder));
     await access(filePath)
-      .then(() => console.log("FS operation failed"))
-      .catch(async () => await writeFile(filePath, content));
+      .then(() => {
+        throw new Error(errorMessage);
+      })
+      .catch(async (error) => {
+        if (error.code === errorNoEntry) {
+          await writeFile(filePath, content);
+        } else {
+          throw error;
+        }
+      });
   } catch (error) {
-    console.log(error);
+    throw new Error(error);
   }
 };
 
